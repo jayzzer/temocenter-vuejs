@@ -51,6 +51,8 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
+
 export default {
   name: 'Login',
   data: () => ({
@@ -68,20 +70,22 @@ export default {
     ],
   }),
   methods: {
+    ...mapActions([
+      'auth',
+    ]),
     submit() {
       if (!this.$refs.login.validate()) {
         return;
       }
 
-      const { username, password } = this.loginData;
-      if (username !== 'demo' || password !== 'demo') {
-        this.authError = 'Неверный логин или пароль';
+      try {
+        this.auth(this.loginData);
+      } catch (e) {
+        this.authError = e.message;
+
         return;
       }
 
-      this.authError = '';
-
-      localStorage.setItem('isAuth', 'true');
       this.$router.push('/');
     },
   },

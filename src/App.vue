@@ -2,6 +2,7 @@
   <v-app>
     <v-app-bar
       app
+      absolute
       color="primary"
       dark
     >
@@ -9,7 +10,7 @@
         <div class="text-h4">Gallery</div>
       </router-link>
       <v-spacer></v-spacer>
-      <v-btn color="error" @click="logout">Выход</v-btn>
+      <v-btn v-if="isAuth" color="error" @click="logout">Выход</v-btn>
     </v-app-bar>
 
     <v-main>
@@ -19,11 +20,21 @@
 </template>
 
 <script>
+import { mapActions, mapState } from 'vuex';
+
 export default {
   name: 'App',
+  computed: {
+    ...mapState([
+      'isAuth',
+    ]),
+  },
   methods: {
+    ...mapActions({
+      userLogout: 'logout',
+    }),
     logout() {
-      localStorage.removeItem('isAuth');
+      this.userLogout();
 
       this.$router.push('/login');
     },
