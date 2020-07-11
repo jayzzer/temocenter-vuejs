@@ -5,11 +5,36 @@ import Login from '../views/Login.vue';
 
 Vue.use(VueRouter);
 
+const ifNotAuthenticated = (to, from, next) => {
+  if (!localStorage.getItem('isAuth')) {
+    next();
+    return;
+  }
+  next('/');
+};
+
+const ifAuthenticated = (to, from, next) => {
+  if (localStorage.getItem('isAuth')) {
+    next();
+    return;
+  }
+  next('/login');
+};
+
 const routes = [
+  // {
+  //   path: '*',
+  //   name: 'NotFound',
+  //   component:,
+  //   meta: {
+  //     title: 'Страница не найдена',
+  //   },
+  // }
   {
     path: '/',
     name: 'Home',
     component: Home,
+    beforeEnter: ifAuthenticated,
     meta: {
       title: 'Главная',
     },
@@ -18,6 +43,7 @@ const routes = [
     path: '/login',
     name: 'Login',
     component: Login,
+    beforeEnter: ifNotAuthenticated,
     meta: {
       title: 'Вход',
     },
@@ -30,9 +56,9 @@ const router = new VueRouter({
   routes,
 });
 
-router.beforeEach = (to, _from, next) => {
+router.beforeEach((to, _from, next) => {
   document.title = to.meta.title;
   next();
-};
+});
 
 export default router;
